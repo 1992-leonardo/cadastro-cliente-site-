@@ -145,57 +145,6 @@ document.getElementById("Cadastrar").addEventListener("click", function (event) 
   const tipoEmpresa = document.getElementById("tiposempresas").value;
   const cargo = document.getElementById("cargo").value;
 
-  // ENVIANDO OS DADOS PARA O BACK-END USANDO FETCH
-  fetch("http://localhost:8080/api/clientes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      nome: nome,
-      telefone: telefone,
-      telefone2: telefone2,
-      email: email,
-      cep: cep,
-      rua: rua,
-      numero: numero,
-      bairro: bairro,
-      cidade: cidade,
-      estado: estado,
-      tipoParceria: tipoParceria,
-      pago: pago,
-      valorPago: valorPago,
-      vencimento: vencimento,
-      tipoEmpresa: tipoEmpresa,
-      cargo: cargo
-    })
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Erro na resposta do servidor");
-      }
-      return response.json();
-    })
-    .then(data => {
-      alert("Cliente cadastrado com sucesso!");
-      // Aqui você pode limpar os campos se quiser:
-      document.getElementById("formularioCliente").reset();
-    })
-    .catch(error => {
-      console.error("Erro ao cadastrar:", error);
-      alert("Erro ao cadastrar cliente.");
-    });
+  
 
-});
-
-// Criando a funcionalidade para o botão cancelar
-document.getElementById("Cancelar").addEventListener("click", function (event) {
-  const confirmar = confirm("Tem certeza que deseja cancelar e apagar os dados?");
-  if (!confirmar) {
-    event.preventDefault(); // impede o reset se o usuário cancelar
-  }
-});
-
-document.getElementById("verClientes").addEventListener("click", function () {
-  window.location.href = "assets/html/clientes.html";
 });
