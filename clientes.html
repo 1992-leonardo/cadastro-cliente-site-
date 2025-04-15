@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Clientes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="text-center">Clientes Cadastrados</h2>
+
+        <table class="table table-bordered table-hover" id="tabelaClientes">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Pago</th>
+                    <th>Data do Pagamento</th>
+                    <th>Ações</th> <!-- Coluna para botões -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dados injetados via JavaScript -->
+            </tbody>
+        </table>
+
+        <a href="/index.html" class="btn btn-primary">Voltar</a>
+    </div>
+
+    <script>
+        // Função para carregar os clientes
+        fetch('http://localhost:8080/api/clientes')
+            .then(response => response.json())
+            .then(clientes => {
+                const tbody = document.querySelector('#tabelaClientes tbody');
+                clientes.forEach(cliente => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+    <td>${cliente.nome || ''}</td>
+    <td>${cliente.pago ? 'Sim' : 'Não'}</td>
+    <td>${cliente.vencimento || ''}</td>
+    <td>
+        <button class="btn btn-warning btn-sm" onclick="editarCliente(${cliente.id})">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="removerCliente(${cliente.id})">Remover</button>
+    </td>
+`;
+
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar clientes:', error);
+                alert('Erro ao carregar a lista de clientes.');
+            });
+
+        // Função para editar cliente
+        function editarCliente(id) {
+            const nome = prompt("Novo nome:");
+            const pago = confirm("Já foi pago? OK = Sim, Cancelar = Não");
+            const vencimento = prompt("Data do pagamento (AAAA-MM-DD):");
+
+            if (nome && vencimento) {
+                fetch(`http://localhost:8080/api/clientes/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nome, pago, vencimento })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Cliente atualizado com sucesso!");
+                            location.reload();
+                        } else {
+                            alert("Erro ao atualizar o cliente.");
+                        }
+                    })
+                    .catch(error => console.error("Erro:", error));
+            }
+        }
+
+
+        // Função para remover cliente
+        function removerCliente(id) {
+            const confirmacao = confirm("Tem certeza que deseja remover este cliente?");
+            if (confirmacao) {
+                fetch(`http://localhost:8080/api/clientes/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Cliente removido com sucesso!");
+                            location.reload();
+                        } else {
+                            alert("Erro ao remover o cliente.");
+                        }
+                    })
+                    .catch(error => console.error("Erro:", error));
+            }
+        }
+    </script>
+</body>
+
+</html>
